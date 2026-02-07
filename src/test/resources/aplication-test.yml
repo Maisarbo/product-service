@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: product-service-test
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
