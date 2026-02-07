@@ -4,14 +4,11 @@ import com.wholparts.product_service.dto.ProductCreationDTO;
 import com.wholparts.product_service.dto.ProductUpdateDTO;
 import com.wholparts.product_service.dto.ProductViewDTO;
 import com.wholparts.product_service.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/products")

@@ -1,4 +1,4 @@
-package com.wholparts.product_service.service;
+package com.wholparts.product_service_test;
 
 import com.opencsv.CSVReader;
 import com.wholparts.product_service.model.NcmCest;
