@@ -44,6 +44,7 @@ jobs:
           echo "spring_datasource_password=postgres" >> $GITHUB_ENV
 
       - name: Run Tests
+        working-directory: services/product-service   
         run: mvn -B clean verify -Dspring.profiles.active=github
 
 
