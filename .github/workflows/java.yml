@@ -1,0 +1,78 @@
+name: Java
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432/tcp
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: productdb
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Export DB variables for tests
+        run: |
+          echo "spring_datasource_url=jdbc:postgresql://localhost:${{ job.services.postgres.ports[5432] }}/productdb" >> $GITHUB_ENV
+          echo "spring_datasource_username=postgres" >> $GITHUB_ENV
+          echo "spring_datasource_password=postgres" >> $GITHUB_ENV
+
+      - name: Run Tests
+        run: mvn -B clean verify -Dspring.profiles.active=github
+
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build
+        run: mvn -B package -DskipTests
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: target/*.jar
+
+
+  docker:
+    needs: build
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
